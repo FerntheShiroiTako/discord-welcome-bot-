@@ -22,6 +22,27 @@ FALLBACK_MESSAGE = "The bot has not functioned as expected, please DM @russianca
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("welcome_bot")
 
+# ---------------------------------------------------------------------------
+# Slash command support. Self-contained on purpose: copy this block, plus the
+# `await tree.sync()` call in on_ready below, into any other discord.py bot
+# that's built on a plain discord.Client (no changes needed as long as the
+# bot's client variable is named `client`). Works the same if the bot uses
+# commands.Bot instead -- just use `bot.tree` in place of a standalone tree.
+#
+# A bot needs at least one registered command for Discord to treat it as
+# using application commands at all, hence this one. Rename/replace it
+# freely; the sync plumbing is what actually matters.
+#
+# Note: the bot's invite link must include the `applications.commands`
+# OAuth2 scope (in addition to `bot`) or slash commands will never show up
+# in the server, no matter how many times you sync.
+# ---------------------------------------------------------------------------
+tree = discord.app_commands.CommandTree(client)
+
+
+@tree.command(name="ping", description="Check that the bot is online.")
+async def ping(interaction: discord.Interaction) -> None:
+    await interaction.response.send_message("Pong!", ephemeral=True)
 
 def _variant_label(path: Path) -> str:
     match = re.search(r"\d+", path.stem)
